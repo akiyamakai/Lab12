@@ -1,44 +1,55 @@
-﻿#include <iostream>
-#include <vector>
+#include <iostream>
 
 using namespace std;
 
+struct MinMaxIndices {
+    int minRow, minCol, maxRow, maxCol;
+};
 
-pair<int, int> findMinMaxIndicesSumAndProduct(const vector<vector<int>>& matrix) {
-    int minRow = 0, minCol = 0, maxRow = 0, maxCol = 0;
+struct SumAndProduct {
+    int sumIndex, productIndex;
+};
 
+void findMinMaxIndices(const int matrix[][3], int rows, int cols, MinMaxIndices& indices) {
+    indices = { 0, 0, 0, 0 };
 
-    for (int i = 0; i < matrix.size(); ++i) {
-        for (int j = 0; j < matrix[i].size(); ++j) {
-            if (matrix[i][j] < matrix[minRow][minCol]) {
-                minRow = i;
-                minCol = j;
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            if (matrix[i][j] < matrix[indices.minRow][indices.minCol]) {
+                indices.minRow = i;
+                indices.minCol = j;
             }
-            if (matrix[i][j] > matrix[maxRow][maxCol]) {
-                maxRow = i;
-                maxCol = j;
+            if (matrix[i][j] > matrix[indices.maxRow][indices.maxCol]) {
+                indices.maxRow = i;
+                indices.maxCol = j;
             }
         }
     }
+}
 
-
-    return make_pair(minRow + minCol + maxRow + maxCol, minRow * minCol * maxRow * maxCol);
+void calculateSumAndProductIndices(const MinMaxIndices& indices, SumAndProduct& result) {
+    result.sumIndex = indices.minRow + indices.minCol + indices.maxRow + indices.maxCol;
+    result.productIndex = indices.minRow * indices.minCol * indices.maxRow * indices.maxCol;
 }
 
 int main() {
+    const int rows = 3;
+    const int cols = 3;
 
-    vector<vector<int>> matrix = {
+    int matrix[rows][cols] = {
         {1, 2, 3},
         {4, 5, 6},
         {7, 8, 9}
     };
 
+    MinMaxIndices minMaxIndices;
+    SumAndProduct result;
 
-    pair<int, int> result = findMinMaxIndicesSumAndProduct(matrix);
+    findMinMaxIndices(matrix, rows, cols, minMaxIndices);
+    calculateSumAndProductIndices(minMaxIndices, result);
 
-
-    cout << "Summa index: " << result.first << endl;
-    cout << "Dobutok index: " << result.second << endl;
+    cout << "Summa index: " << result.sumIndex << endl;
+    cout << "Dobutok index: " << result.productIndex << endl;
 
     return 0;
 }
